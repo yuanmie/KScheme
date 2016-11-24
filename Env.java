@@ -23,6 +23,10 @@ public class Env {
         else environment.put(identifier, object);
     }
 
+    public void install_local(String identifier, Object object){
+        environment.put(identifier, object);
+    }
+
     public void set(String identifier, Object object){
         if(environment.get(identifier) != null)
             environment.put(identifier, object);

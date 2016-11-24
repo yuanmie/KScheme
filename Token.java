@@ -75,7 +75,11 @@ public class Token {
                 currIndex += 2;
                 this.type = "true";
                 return "#t";
-            }
+            }else if(charArray[currIndex+1] == '\\' && isAlpha(charArray[currIndex+2])){
+                currIndex += 3;
+                this.type = "char";
+                return "'" + charArray[currIndex-1] + "'";
+             }
                 break;
             case 't':
                 if (charArray[currIndex + 1] == 'r' && charArray[currIndex + 2] == 'u' && charArray[currIndex + 3] == 'e') {

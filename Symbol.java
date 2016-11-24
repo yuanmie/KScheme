@@ -21,7 +21,8 @@ public class Symbol {
             s.append("procedure : aysn\n");
             s.append("args: " + p.args.toString());
             return s.toString();
+        }else{
+            return value.toString();
         }
-        return "cannot display!";
     }
 }

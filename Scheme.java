@@ -43,6 +43,27 @@ public class Scheme {
         ast = scheme.parser.parse();
         o = scheme.eval(ast, scheme.global);
         scheme.display(o);
+
+        text = "(define (z x) (if #t x))";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
+
+        text = "(define a (lambda (abc) (abc 5)))";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
+
+        text = "(a z)";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
         while(true){
             System.out.print("KScheme>");
              text = input.nextLine();
@@ -114,7 +135,7 @@ public class Scheme {
             List<AST> actualArgs = ast.args;
             int size = formArgs.size();
            for(int index = 0; index < formArgs.size(); index ++){
-                env.install(formArgs.get(index).name, eval(actualArgs.get(index), env));
+                env.install_local(formArgs.get(index).name, eval(actualArgs.get(index), env));
            }
            return eval(procedure.body, procedure.env);
         }

@@ -3,6 +3,7 @@ import java.util.List;
 
 public class Parser {
     public Token token;
+    private boolean isProcedure = false;
 
     public Parser(Token token){
         this.token = token;
@@ -21,6 +22,7 @@ public class Parser {
         AST ast = null;
         String t = token.peekToken();
         if(First.contains("expression", t) && First.contains("definition", t)){
+                isProcedure = true;
                 token.nextToken();
                 t = token.peekToken();
             if(t.equals("define")){
@@ -41,7 +43,7 @@ public class Parser {
         AST ast = new AST();
         //only process variable
         String t = token.nextToken();
-        boolean isProcedure = false;
+
         if(t.equals("(")) {t = token.nextToken(); isProcedure = true;};
 
 
@@ -49,8 +51,17 @@ public class Parser {
             ast.op = "indir";
             ast.name = t;
         }
-        else if(token.type.equals("String")){
-
+        else if(token.type.equals("string") || token.type.equals("char")){
+            Symbol symbol = ConstantPool.lookup(t);
+            if(symbol == null) {
+                Type type = new Type();
+                symbol = new Symbol();
+                type.type = token.type;
+                symbol.type = type;
+                symbol.value = t;
+                ConstantPool.install(t, symbol);
+            }
+            ast = AST.constAST("const", symbol);
         }else if(token.type.equals("number")){
             Symbol symbol = ConstantPool.lookup(t);
             if(symbol == null){
@@ -71,6 +82,7 @@ public class Parser {
 
             ast = AST.constAST("const", symbol);
         }else if(token.type.equals("if")){
+            isProcedure = false;
             ast.op = "if";
             ast.left = parse_expression();
             ast.right = new AST();
@@ -128,6 +140,7 @@ public class Parser {
             ast.seq = seq;
         }
         else{
+            isProcedure = false;
             ast.op = "call";
             String procedure = t;
             List<AST> actualArgs = new ArrayList<AST>();
@@ -137,6 +150,7 @@ public class Parser {
             ast.name =procedure;
             ast.args = actualArgs;
         }
+        isProcedure = false;
         return ast;
     }
 
@@ -182,9 +196,35 @@ public class Parser {
         AST ast = new AST();
         if(t.equals("define")){
             ast.op = "define";
-            ast.left = AST.leftValue(token.nextToken());
-            ast.right = parse_expression();
-            expect(")");
+            t = token.nextToken();
+            if(t.equals("(")){
+                t = token.nextToken();
+                ast.left = AST.leftValue(t);
+
+                List<Symbol> args = new ArrayList<Symbol>();
+                //resolve param
+                while(!peekExpect(")")){
+                        args.add(parse_variable());
+                }
+
+                //resolve body
+                Symbol s = new Symbol();
+                Type type = new Type("procedure");
+                AST right = new AST();
+                s.type = type;
+                right.op = "lambda";
+                Procedure p = new Procedure();
+                p.args = args;
+                p.body = parse_body();
+                s.value = p;
+                right.value = s;
+                ast.right = right;
+                expect(")");
+            }else{
+                ast.left = AST.leftValue(t);
+                ast.right = parse_expression();
+                expect(")");
+            }
         }
         return ast;
     }

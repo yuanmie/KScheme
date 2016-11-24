@@ -12,4 +12,11 @@ public class Pair {
         this.first = rest;
     }
 
+    public Object car(Pair p){
+        return p.first;
+    }
+
+    public Object cdr(Pair p){
+        return p.rest;
+    }
 }
