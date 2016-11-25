@@ -114,6 +114,12 @@ public class Parser {
             ast.op = t;
             ast.seq = parse_condBody();
             expect(")");
+        }else if(t.equals("let")){
+            isProcedure = false;
+            ast.op = t;
+            ast.seq = parse_letBody();
+            ast.seq.add(parse_expression());
+            expect(")");
         }else if(token.type.equals("true")){
             Type type = new Type();
             Symbol symbol = new Symbol();
@@ -189,6 +195,22 @@ public class Parser {
         }
         isProcedure = false;
         return ast;
+    }
+
+    private List<AST> parse_letBody() {
+        expect("(");
+        List<AST> result = new ArrayList<AST>();
+        while(!peekExpect(")")){
+            expect("(");
+            AST ast = new AST();
+            ast.op = "letAssign";
+            String t = token.nextToken();
+            ast.left = AST.leftValue(t);
+            ast.right = parse_expression();
+            expect(")");
+            result.add(ast);
+        }
+        return result;
     }
 
     private List<AST> parse_condBody() {

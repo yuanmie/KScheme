@@ -153,6 +153,13 @@ public class Scheme {
         ast = scheme.parser.parse();
         o = scheme.eval(ast, scheme.global);
         scheme.display(o);
+
+        text =  "(let ((x 134) (y 2) (z 3)) (+ x y z))";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
         while(true){
             System.out.print("KScheme>");
              text = input.nextLine();
@@ -235,6 +242,20 @@ public class Scheme {
             for(AST a : seq){
                 o = eval(a, env);
             }
+            return o;
+        }
+        if(ast.op.equals("let")){
+            List<AST> seq = ast.seq;
+            AST last = seq.remove(seq.size()-1);
+            Env e = new Env();
+            e.parent = env;
+            Object o = null;
+            for(AST a : seq){
+                String name = a.left.name;
+                o = eval(a.right, env);
+                e.install_local(name, o);
+            }
+            o = eval(last, e);
             return o;
         }
         if(ast.op.equals("call")){

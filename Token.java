@@ -169,6 +169,14 @@ public class Token {
                     currIndex += 4;
                     this.type = "list";
                     return "list";
+                }else if(charArray[currIndex + 1] == 'e' && charArray[currIndex + 2] == 't' && charArray[currIndex + 3] == '*'){
+                    currIndex += 4;
+                    this.type = "let*";
+                    return "let*";
+                }else if(charArray[currIndex + 1] == 'e' && charArray[currIndex + 2] == 't'){
+                    currIndex += 3;
+                    this.type = "let";
+                    return "let";
                 }
             case 's':
                 if (charArray[currIndex + 1] == 'e' && charArray[currIndex + 2] == 't' && charArray[currIndex + 3] == '!') {
