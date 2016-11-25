@@ -97,6 +97,18 @@ public class Parser {
             }else{
                 expect(")");
             }
+        }else if(t.equals("when")){
+            isProcedure = false;
+            ast.op = "when";
+            ast.left = parse_expression();
+            ast.right = new AST();
+            ast.right.op = "begin";
+
+            List<AST> seq = new ArrayList<AST>();
+            while(!peekExpect(")")){
+                seq.add(parse_expression());
+            }
+            ast.right.seq = seq;
         }else if(token.type.equals("true")){
             Type type = new Type();
             Symbol symbol = new Symbol();

@@ -132,6 +132,13 @@ public class Scheme {
         ast = scheme.parser.parse();
         o = scheme.eval(ast, scheme.global);
         scheme.display(o);
+
+        text =  "(when #t (set! zz 345) (if #t zz))";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
         while(true){
             System.out.print("KScheme>");
              text = input.nextLine();
@@ -172,6 +179,12 @@ public class Scheme {
                 return eval(ast.right.left,env);
             }else{
                 return eval(ast.right.right, env);
+            }
+        }
+        if(ast.op.equals("when")) {
+            Symbol cmp = (Symbol) eval(ast.left, env);
+            if ("#t".equals(cmp.toString())) {
+                return eval(ast.right, env);
             }
         }
         if(ast.op.equals("quote")){

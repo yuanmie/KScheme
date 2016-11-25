@@ -97,6 +97,23 @@ public class Token {
                 }
 
                 break;
+            case 'w':
+                if (charArray[currIndex + 1] == 'h' && charArray[currIndex + 2] == 'e' && charArray[currIndex + 3] == 'n') {
+                    currIndex += 4;
+                    this.type = "when";
+                    return "when";
+                }
+
+                break;
+            case 'u':
+                if (charArray[currIndex + 1] == 'n' && charArray[currIndex + 2] == 'l' && charArray[currIndex + 3] == 'e'
+                        && charArray[currIndex+4] == 's' && charArray[currIndex+5] == 's') {
+                    currIndex += 6;
+                    this.type = "unless";
+                    return "unless";
+                }
+
+                break;
             case 'f':
                 if (charArray[currIndex + 1] == 'a' && charArray[currIndex + 2] == 'l' && charArray[currIndex + 3] == 's' && charArray[currIndex + 4] == 'e') {
                     currIndex += 5;
