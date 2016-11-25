@@ -146,6 +146,13 @@ public class Scheme {
         ast = scheme.parser.parse();
         o = scheme.eval(ast, scheme.global);
         scheme.display(o);
+
+        text =  "(cond (#f 1) (#t 2) (else 999))";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
         while(true){
             System.out.print("KScheme>");
              text = input.nextLine();
@@ -187,6 +194,15 @@ public class Scheme {
             }else{
                 return eval(ast.right.right, env);
             }
+        }
+        if(ast.op.equals("cond")){
+            List<AST> seq = ast.seq;
+            Object o = null;
+            for(AST a : seq){
+                o = eval(a, env);
+                if(o != null) return o;
+            }
+            return o;
         }
         if(ast.op.equals("when")) {
             Symbol cmp = (Symbol) eval(ast.left, env);

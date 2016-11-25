@@ -109,6 +109,11 @@ public class Parser {
                 seq.add(parse_expression());
             }
             ast.right.seq = seq;
+        }else if(t.equals("cond")){
+            isProcedure = false;
+            ast.op = t;
+            ast.seq = parse_condBody();
+            expect(")");
         }else if(token.type.equals("true")){
             Type type = new Type();
             Symbol symbol = new Symbol();
@@ -184,6 +189,27 @@ public class Parser {
         }
         isProcedure = false;
         return ast;
+    }
+
+    private List<AST> parse_condBody() {
+        List<AST> result = new ArrayList<AST>();
+        while(!token.peekToken().equals(")")){
+            expect("(");
+            AST ast = new AST();
+            if(token.peekToken().equals("else")){
+                token.nextToken();
+                ast = parse_expression();
+                expect(")");
+            }else{
+                ast.op = "if";
+                ast.left = parse_expression();
+                ast.right = new AST();
+                ast.right.left = parse_expression();
+                expect(")");
+            }
+            result.add(ast);
+        }
+        return result;
     }
 
     private List<AST> parse_body() {

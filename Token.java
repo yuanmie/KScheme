@@ -94,6 +94,10 @@ public class Token {
                     currIndex += 4;
                     this.type = "cons";
                     return "cons";
+                }else  if (charArray[currIndex + 1] == 'o' && charArray[currIndex + 2] == 'n' && charArray[currIndex + 3] == 'd') {
+                    currIndex += 4;
+                    this.type = "cond";
+                    return "cond";
                 }
 
                 break;
