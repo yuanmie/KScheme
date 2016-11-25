@@ -5,6 +5,7 @@ public class Parser {
     public Token token;
     private boolean isProcedure = false;
     private boolean isListArgs = false;
+    private boolean isPairArgs;
 
     public Parser(Token token){
         this.token = token;
@@ -131,7 +132,9 @@ public class Parser {
             p.args = parse_formal();
             p.body = parse_body();
             p.isListArgs = isListArgs;
+            p.isPairArgs = isPairArgs;
             isListArgs = false;
+            isPairArgs = false;
             s.value = p;
             ast.value = s;
 
@@ -185,7 +188,8 @@ public class Parser {
                 isListArgs = true;
             }
             if(token.peekToken().equals(".")){
-
+                token.nextToken();
+                isPairArgs = true;
             }
         }
         return args;

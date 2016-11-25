@@ -6,4 +6,5 @@ public class Procedure {
      List<Symbol> args;
      AST body;
     public boolean isListArgs;
+    public boolean isPairArgs;
 }

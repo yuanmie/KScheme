@@ -100,6 +100,20 @@ public class Scheme {
         ast = scheme.parser.parse();
         o = scheme.eval(ast, scheme.global);
         scheme.display(o);
+
+        text = "(define a (lambda (x ... . y) (if #f x y)))";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
+
+        text = "(a 12 34 (list 1 2))";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
         while(true){
             System.out.print("KScheme>");
              text = input.nextLine();
@@ -206,7 +220,20 @@ public class Scheme {
                 procedure.env.parent = env;
                 List<Symbol> formArgs = procedure.args;
                 List<AST> actualArgs = ast.args;
-                if(procedure.isListArgs){
+                if(procedure.isPairArgs){
+                    String argsListName = formArgs.get(0).name;
+                    String argsPairName = formArgs.get(1).name; //pair args
+                    Symbol s = new Symbol();
+                    s.type = new Type("list");
+                    List<Symbol> list = new ArrayList<Symbol>();
+                    for(AST a : actualArgs){
+                        list.add((Symbol)eval(a, env));
+                    }
+                    Symbol last = list.remove(list.size() - 1);
+                    s.value = list;
+                    procedure.env.install_local(argsListName, s);
+                    procedure.env.install_local(argsPairName, last);
+                }else if(procedure.isListArgs && !procedure.isPairArgs){
                     String argsListName = formArgs.get(0).name;
                     Symbol s = new Symbol();
                     s.type = new Type("list");
