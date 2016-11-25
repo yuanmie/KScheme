@@ -89,6 +89,14 @@ public class Token {
                 }
 
                 break;
+            case 'c':
+                if (charArray[currIndex + 1] == 'o' && charArray[currIndex + 2] == 'n' && charArray[currIndex + 3] == 's') {
+                    currIndex += 4;
+                    this.type = "cons";
+                    return "cons";
+                }
+
+                break;
             case 'f':
                 if (charArray[currIndex + 1] == 'a' && charArray[currIndex + 2] == 'l' && charArray[currIndex + 3] == 's' && charArray[currIndex + 4] == 'e') {
                     currIndex += 5;
@@ -129,8 +137,11 @@ public class Token {
                     currIndex += 6;
                     this.type = "lambda";
                     return "lambda";
+                }else if (charArray[currIndex + 1] == 'i' && charArray[currIndex + 2] == 's' && charArray[currIndex + 3] == 't') {
+                    currIndex += 4;
+                    this.type = "list";
+                    return "list";
                 }
-                break;
             case 's':
                 if (charArray[currIndex + 1] == 'e' && charArray[currIndex + 2] == 't' && charArray[currIndex + 3] == '!') {
                     currIndex += 4;
@@ -149,9 +160,20 @@ public class Token {
             case '[':
                 this.type = "array";
             case ']':
+                case '+':
+                case '/':
+                case '*':
                 ++currIndex;
                 return ch + "";
             //string token
+            case '.':if(charArray[currIndex+1] == '.' && charArray[currIndex+2] == '.') {
+                    currIndex += 3;
+                    return "...";
+                }else{
+                    ++currIndex;
+                    return ".";
+            }
+
             case '"':
                 oldIndex = currIndex;
                 while (!eof() && charArray[++currIndex] != '"') {
@@ -205,6 +227,12 @@ public class Token {
                     return text.substring(oldIndex,currIndex);
                 }
                 else {
+                    if(sign.equals("-")){
+                        ++currIndex;
+                        sign = "";
+                        return "-";
+
+                    }
                     throw new RuntimeException("lex error!");
                 }
 

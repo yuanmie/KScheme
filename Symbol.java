@@ -1,3 +1,4 @@
+import java.util.List;
 
 public class Symbol {
     String name;
@@ -21,7 +22,13 @@ public class Symbol {
             s.append("procedure : aysn\n");
             s.append("args: " + p.args.toString());
             return s.toString();
-        }else{
+        }else if(type.type.equals("pair")){
+            Pair p = (Pair)value;
+            return "(" + p.first.toString() + " . " + p.rest.toString() + ")";
+        }else if(type.type.equals("list")){
+            List<Symbol> list = (List<Symbol>)value;
+            return list.toString();
+        } else{
             return value.toString();
         }
     }

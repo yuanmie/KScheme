@@ -5,4 +5,5 @@ public class Procedure {
      Object returnValue;
      List<Symbol> args;
      AST body;
+    public boolean isListArgs;
 }

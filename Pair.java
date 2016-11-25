@@ -1,7 +1,7 @@
 
 public class Pair {
-    private Object first;
-    private Object rest;
+     Object first;
+     Object rest;
 
     public Pair(){
 

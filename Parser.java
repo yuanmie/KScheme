@@ -4,6 +4,7 @@ import java.util.List;
 public class Parser {
     public Token token;
     private boolean isProcedure = false;
+    private boolean isListArgs = false;
 
     public Parser(Token token){
         this.token = token;
@@ -126,13 +127,29 @@ public class Parser {
             s.type = type;
             ast.op = "lambda";
             Procedure p = new Procedure();
+
             p.args = parse_formal();
             p.body = parse_body();
+            p.isListArgs = isListArgs;
+            isListArgs = false;
             s.value = p;
             ast.value = s;
+
             expect(")");
         }else if(t.equals("begin")){
             ast.op = "begin";
+            List<AST> seq = new ArrayList<AST>();
+            while(!peekExpect(")")){
+                seq.add(parse_expression());
+            }
+            ast.seq = seq;
+        }else if(t.equals("cons")){
+            ast.op = "cons";
+            ast.left = parse_expression();
+            ast.right = parse_expression();
+            expect(")");
+        }else if(t.equals("list")){
+            ast.op = "list";
             List<AST> seq = new ArrayList<AST>();
             while(!peekExpect(")")){
                 seq.add(parse_expression());
@@ -163,6 +180,13 @@ public class Parser {
         expect("(");
         while(!peekExpect(")")){
             args.add(parse_variable());
+            if(token.peekToken().equals("...")){
+                token.nextToken();
+                isListArgs = true;
+            }
+            if(token.peekToken().equals(".")){
+
+            }
         }
         return args;
     }

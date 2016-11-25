@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -5,9 +7,15 @@ public class Scheme {
     private Env global;
     private Token token;
     Parser parser;
+    public String[] primitive = {
+            "+", "-", "*", "/"
+    };
+    public List<String> primitiveList;
+
     public Scheme(){
         global = new Env();
         global.installPrimitive();
+        primitiveList = Arrays.asList(primitive);
     }
 
     public static void main(String args[]){
@@ -59,6 +67,34 @@ public class Scheme {
         scheme.display(o);
 
         text = "(a z)";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
+
+        text = "(cons 1 2)";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
+
+        text = "(list 1 2 3 4)";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
+
+        text = "(define a (lambda (x ...) (if #t x)))";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
+
+        text = "(+ 1 2 3 4 5)";
         token.setText(text);
         scheme.setToken(token);
         ast = scheme.parser.parse();
@@ -125,19 +161,89 @@ public class Scheme {
             return o;
         }
         if(ast.op.equals("call")){
-            Symbol symbol = (Symbol)env.lookup(ast.name);
-            Procedure procedure = (Procedure)symbol.value;
-            //build env
-            Env procedureEnv = new Env();
-            procedure.env = procedureEnv;
-            procedure.env.parent = env;
-            List<Symbol> formArgs = procedure.args;
-            List<AST> actualArgs = ast.args;
-            int size = formArgs.size();
-           for(int index = 0; index < formArgs.size(); index ++){
-                env.install_local(formArgs.get(index).name, eval(actualArgs.get(index), env));
-           }
-           return eval(procedure.body, procedure.env);
+            if(primitiveList.contains(ast.name)){
+                String pname = ast.name;
+                List<AST> actualArgs = ast.args;
+                List<Symbol> list = new ArrayList<Symbol>();
+                for(AST a : actualArgs){
+                    list.add((Symbol)eval(a, env));
+                }
+                int tmp = 0;
+                if(pname.equals("+")){
+                    for(int i = 0; i < list.size(); i++){
+                        tmp += (Integer)list.get(i).value;
+                    }
+                }
+                else if(pname.equals("-")){
+                    tmp = (Integer)list.get(0).value;
+                    for(int i = 1; i < list.size(); i++){
+                        tmp -= (Integer)list.get(i).value;
+                    }
+                }
+                else if(pname.equals("*")){
+                    tmp = 1;
+                    for(int i = 0; i < list.size(); i++){
+                        tmp *= (Integer)list.get(i).value;
+                    }
+                }
+                else if(pname.equals("/")){
+                    tmp = (Integer)list.get(0).value;
+                    for(int i = 1; i < list.size(); i++){
+                        tmp /= (Integer)list.get(i).value;
+                    }
+                }
+
+                Symbol s = new Symbol();
+                s.type = new Type("int");
+                s.value = tmp;
+                return s;
+            }else{
+                Symbol symbol = (Symbol)env.lookup(ast.name);
+                Procedure procedure = (Procedure)symbol.value;
+                //build env
+                Env procedureEnv = new Env();
+                procedure.env = procedureEnv;
+                procedure.env.parent = env;
+                List<Symbol> formArgs = procedure.args;
+                List<AST> actualArgs = ast.args;
+                if(procedure.isListArgs){
+                    String argsListName = formArgs.get(0).name;
+                    Symbol s = new Symbol();
+                    s.type = new Type("list");
+                    List<Symbol> list = new ArrayList<Symbol>();
+                    for(AST a : actualArgs){
+                        list.add((Symbol)eval(a, env));
+                    }
+                    s.value = list;
+                    procedure.env.install_local(argsListName, s);
+                }else{
+                    int size = formArgs.size();
+                    for(int index = 0; index < formArgs.size(); index ++){
+                        procedure.env.install_local(formArgs.get(index).name, eval(actualArgs.get(index), env));
+                    }
+                }
+
+                return eval(procedure.body, procedure.env);
+            }
+
+        }if(ast.op.equals("cons")){
+            Symbol s = new Symbol();
+            s.type = new Type("pair");
+            Pair pair = new Pair();
+            pair.first = eval(ast.left, env);
+            pair.rest = eval(ast.right, env);
+            s.value = pair;
+            return s;
+        }if(ast.op.equals("list")){
+            Symbol s = new Symbol();
+            s.type = new Type("list");
+            List<AST> seq = ast.seq;
+            List<Symbol> list = new ArrayList<Symbol>();
+            for(AST a : seq){
+                list.add((Symbol)eval(a, env));
+            }
+            s.value = list;
+            return s;
         }
         return null;
     }
