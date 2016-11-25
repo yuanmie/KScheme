@@ -104,6 +104,13 @@ public class Token {
                     return "false";
                 }
                 break;
+            case 'a':
+                if (charArray[currIndex + 1] == 'p' && charArray[currIndex + 2] == 'p' && charArray[currIndex + 3] == 'l' && charArray[currIndex + 4] == 'y') {
+                    currIndex += 5;
+                    this.type = "apply";
+                    return "apply";
+                }
+                break;
             case 'b':
                 if (charArray[currIndex + 1] == 'e' && charArray[currIndex + 2] == 'g' && charArray[currIndex + 3] == 'i' && charArray[currIndex + 4] == 'n') {
                     currIndex += 5;
@@ -163,6 +170,7 @@ public class Token {
                 case '+':
                 case '/':
                 case '*':
+                    this.type = "identifier";
                 ++currIndex;
                 return ch + "";
             //string token

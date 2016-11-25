@@ -1,14 +1,11 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Scheme {
     private Env global;
     private Token token;
     Parser parser;
     public String[] primitive = {
-            "+", "-", "*", "/"
+            "+", "-", "*", "/","apply"
     };
     public List<String> primitiveList;
 
@@ -31,21 +28,21 @@ public class Scheme {
         AST ast ;
         Object o ;
         Token token = new Token();
-        text = "(define a (lambda (x y) (if #t x y)))";
+        text = "(define zz (lambda (x y) (if #t x y)))";
         token.setText(text);
         scheme.setToken(token);
         ast = scheme.parser.parse();
         o = scheme.eval(ast, scheme.global);
         scheme.display(o);
 
-        text = "(define result (a 199 2))";
+        text = "(define result (zz 199 2))";
         token.setText(text);
         scheme.setToken(token);
         ast = scheme.parser.parse();
         o = scheme.eval(ast, scheme.global);
         scheme.display(o);
 
-        text = "(begin (set! a 2) (if #t a))";
+        text = "(begin (set! zz 2) (if #t zz))";
         token.setText(text);
         scheme.setToken(token);
         ast = scheme.parser.parse();
@@ -59,14 +56,14 @@ public class Scheme {
         o = scheme.eval(ast, scheme.global);
         scheme.display(o);
 
-        text = "(define a (lambda (abc) (abc 5)))";
+        text = "(define zz (lambda (zzbc) (zzbc 5)))";
         token.setText(text);
         scheme.setToken(token);
         ast = scheme.parser.parse();
         o = scheme.eval(ast, scheme.global);
         scheme.display(o);
 
-        text = "(a z)";
+        text = "(zz z)";
         token.setText(text);
         scheme.setToken(token);
         ast = scheme.parser.parse();
@@ -87,7 +84,7 @@ public class Scheme {
         o = scheme.eval(ast, scheme.global);
         scheme.display(o);
 
-        text = "(define a (lambda (x ...) (if #t x)))";
+        text = "(define zz (lambda (x ...) (if #t x)))";
         token.setText(text);
         scheme.setToken(token);
         ast = scheme.parser.parse();
@@ -101,14 +98,21 @@ public class Scheme {
         o = scheme.eval(ast, scheme.global);
         scheme.display(o);
 
-        text = "(define a (lambda (x ... . y) (if #f x y)))";
+        text = "(define zz (lambda (x ... . y) (if #f x y)))";
         token.setText(text);
         scheme.setToken(token);
         ast = scheme.parser.parse();
         o = scheme.eval(ast, scheme.global);
         scheme.display(o);
 
-        text = "(a 12 34 (list 1 2))";
+        text = "(zz 12 34 (list 1 2))";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
+
+        text = "(apply + 1 2 (list 3 44))";
         token.setText(text);
         scheme.setToken(token);
         ast = scheme.parser.parse();
@@ -205,6 +209,18 @@ public class Scheme {
                     for(int i = 1; i < list.size(); i++){
                         tmp /= (Integer)list.get(i).value;
                     }
+                }else if(pname.equals("apply")){
+                    Symbol add = (Symbol)eval(actualArgs.remove(0), env);
+                    AST last = actualArgs.remove(actualArgs.size()-1);
+                    List<AST> lastList = last.seq;
+                    actualArgs.addAll(lastList);
+                    AST func = new AST();
+                    func.op = "call";
+                    func.name = "+";
+                    func.args = actualArgs;
+                    Symbol s = (Symbol)eval(func, env);
+                    return s;
+
                 }
 
                 Symbol s = new Symbol();
