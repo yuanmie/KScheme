@@ -97,9 +97,9 @@ public class Parser {
             }else{
                 expect(")");
             }
-        }else if(t.equals("when")){
+        }else if(t.equals("when") || t.equals("unless")){
             isProcedure = false;
-            ast.op = "when";
+            ast.op = t;
             ast.left = parse_expression();
             ast.right = new AST();
             ast.right.op = "begin";

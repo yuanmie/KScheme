@@ -139,6 +139,13 @@ public class Scheme {
         ast = scheme.parser.parse();
         o = scheme.eval(ast, scheme.global);
         scheme.display(o);
+
+        text =  "(unless #f (set! zz 345666) (if #t zz))";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
         while(true){
             System.out.print("KScheme>");
              text = input.nextLine();
@@ -186,6 +193,13 @@ public class Scheme {
             if ("#t".equals(cmp.toString())) {
                 return eval(ast.right, env);
             }
+        }
+        if(ast.op.equals("unless")) {
+            Symbol cmp = (Symbol) eval(ast.left, env);
+            if ("#f".equals(cmp.toString())) {
+                return eval(ast.right, env);
+            }
+            return null;
         }
         if(ast.op.equals("quote")){
             return ast.value;
