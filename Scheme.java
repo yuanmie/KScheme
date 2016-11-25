@@ -138,7 +138,9 @@ public class Scheme {
         }
 
         if(ast.op.equals("indir")){
-            return env.lookup(ast.name);
+            Symbol s = (Symbol)env.lookup(ast.name);
+            if(s != null) s.name = ast.name;
+            return s;
         }
         if(ast.op.equals("const")){
             Symbol constant = ast.value;
@@ -216,7 +218,7 @@ public class Scheme {
                     actualArgs.addAll(lastList);
                     AST func = new AST();
                     func.op = "call";
-                    func.name = "+";
+                    func.name = (add != null) ?add.name : "+";
                     func.args = actualArgs;
                     Symbol s = (Symbol)eval(func, env);
                     return s;
