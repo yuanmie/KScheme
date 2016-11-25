@@ -174,8 +174,12 @@ public class Parser {
         return ast;
     }
 
-    private AST parse_body() {
-        return parse_expression();
+    private List<AST> parse_body() {
+        List<AST> body = new ArrayList<AST>();
+        while(!token.peekToken().equals(")")){
+            body.add(parse_expression());
+        }
+        return body;
     }
 
     private List<Symbol> parse_formal() {

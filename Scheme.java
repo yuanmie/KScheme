@@ -118,6 +118,20 @@ public class Scheme {
         ast = scheme.parser.parse();
         o = scheme.eval(ast, scheme.global);
         scheme.display(o);
+
+        text = "(define (xunc xxx) (begin (set! xxx 2) (if #t xxx)))";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
+
+        text = "(define xunc (lambda (xxx) (set! xxx 2) (if #t xxx)))";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
         while(true){
             System.out.print("KScheme>");
              text = input.nextLine();
@@ -267,8 +281,9 @@ public class Scheme {
                         procedure.env.install_local(formArgs.get(index).name, eval(actualArgs.get(index), env));
                     }
                 }
-
-                return eval(procedure.body, procedure.env);
+                Object result = null;
+                for(AST tree : procedure.body) result = eval(tree, procedure.env);
+                return result;
             }
 
         }if(ast.op.equals("cons")){
