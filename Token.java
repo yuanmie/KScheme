@@ -169,7 +169,12 @@ public class Token {
                     currIndex += 4;
                     this.type = "list";
                     return "list";
-                }else if(charArray[currIndex + 1] == 'e' && charArray[currIndex + 2] == 't' && charArray[currIndex + 3] == '*'){
+                }else if (charArray[currIndex + 1] == 'e' && charArray[currIndex + 2] == 't' && charArray[currIndex + 3] == 'r' && charArray[currIndex + 4] == 'e' && charArray[currIndex + 5] == 'c') {
+                    currIndex += 6;
+                    this.type = "letrec";
+                    return "letrec";
+                }
+                else if(charArray[currIndex + 1] == 'e' && charArray[currIndex + 2] == 't' && charArray[currIndex + 3] == '*'){
                     currIndex += 4;
                     this.type = "let*";
                     return "let*";

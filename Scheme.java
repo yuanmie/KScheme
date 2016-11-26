@@ -174,6 +174,34 @@ public class Scheme {
         ast = scheme.parser.parse();
         o = scheme.eval(ast, scheme.global);
         scheme.display(o);
+
+        text =  "(define xac (lambda (xxx) (if (= xxx 0) 1 (* xxx (xac (- xxx 1))))))";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
+
+        text =  "(define xeven (lambda (xxx) (if (= xxx 0) #t (xodd (- xxx 1)))))";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
+
+        text =  "(define xodd (lambda (xxx) (if (= xxx 0) #f (xeven (- xxx 1)))))";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
+
+        text =  "(let* ((xeven (lambda (xxx) (if (= xxx 0) #t (xodd (- xxx 1))))) (xodd (lambda (xxx) (if (= xxx 0) #f (xeven (- xxx 1)))))) (xodd 9))";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
         while(true){
             System.out.print("KScheme>");
              text = input.nextLine();
@@ -258,18 +286,21 @@ public class Scheme {
             }
             return o;
         }
-        if(ast.op.equals("let") || ast.op.equals("let*")){
+        if(ast.op.equals("let") || ast.op.equals("let*") || ast.op.equals("letrec")){
             String op = ast.op;
             List<AST> seq = ast.seq;
             AST last = seq.remove(seq.size()-1);
             Env e = new Env();
             e.parent = env;
             Object o = null;
+            int count = 0;
             for(AST a : seq){
                 String name = a.left.name;
                 if(op.equals("let")){
                     o = eval(a.right, env);
                 }else if(op.equals("let*")){
+                    o = eval(a.right, (count++ == 0 ? env : e));
+                }else if(op.equals("letrec")){
                     o = eval(a.right, e);
                 }
                 e.install_local(name, o);

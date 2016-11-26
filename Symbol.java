@@ -19,7 +19,7 @@ public class Symbol {
         }else if (type.type.equals("procedure")){
             Procedure p = (Procedure)value;
             StringBuffer s = new StringBuffer();
-            s.append("procedure : aysn\n");
+            s.append("procedure : anonymous\n");
             s.append("args: " + p.args.toString());
             return s.toString();
         }else if(type.type.equals("pair")){

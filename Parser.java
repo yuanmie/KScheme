@@ -114,7 +114,7 @@ public class Parser {
             ast.op = t;
             ast.seq = parse_condBody();
             expect(")");
-        }else if(t.equals("let") || t.equals("let*")){
+        }else if(t.equals("let") || t.equals("let*") || t.equals("letrec")){
             isProcedure = false;
             ast.op = t;
             ast.seq = parse_letBody();
