@@ -202,6 +202,20 @@ public class Scheme {
         ast = scheme.parser.parse();
         o = scheme.eval(ast, scheme.global);
         scheme.display(o);
+
+        text =  "(define xz (lambda (x) (lambda () (set! x (- x 1)))))";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
+
+        text =  "(define xxx (xz 100))";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
         while(true){
             System.out.print("KScheme>");
              text = input.nextLine();
@@ -370,9 +384,15 @@ public class Scheme {
                 Symbol symbol = (Symbol)env.lookup(ast.name);
                 Procedure procedure = (Procedure)symbol.value;
                 //build env
-                Env procedureEnv = new Env();
-                procedure.env = procedureEnv;
-                procedure.env.parent = env;
+                if(procedure.env != null){
+
+                }else{
+                    Env procedureEnv = new Env();
+
+                    procedure.env = procedureEnv;
+                    procedure.env.parent = env;
+                }
+
                 List<Symbol> formArgs = procedure.args;
                 List<AST> actualArgs = ast.args;
                 if(procedure.isPairArgs){
@@ -406,6 +426,12 @@ public class Scheme {
                 }
                 Object result = null;
                 for(AST tree : procedure.body) result = eval(tree, procedure.env);
+                Symbol tree = (Symbol) result;
+                if(tree.value instanceof Procedure){
+                    Procedure procedure1 = (Procedure)tree.value;
+                    procedure1.env = procedure.env;
+                    tree.value = procedure1;
+                };
                 return result;
             }
 
