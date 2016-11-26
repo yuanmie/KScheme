@@ -5,7 +5,7 @@ public class Scheme {
     private Token token;
     Parser parser;
     public String[] primitive = {
-            "+", "-", "*", "/","apply"
+            "+", "-", "*", "/","=","apply"
     };
     public List<String> primitiveList;
 
@@ -167,6 +167,13 @@ public class Scheme {
         ast = scheme.parser.parse();
         o = scheme.eval(ast, scheme.global);
         scheme.display(o);
+
+        text =  "(= 1 2)";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
         while(true){
             System.out.print("KScheme>");
              text = input.nextLine();
@@ -301,7 +308,16 @@ public class Scheme {
                     for(int i = 1; i < list.size(); i++){
                         tmp /= (Integer)list.get(i).value;
                     }
-                }else if(pname.equals("apply")){
+                }else if(pname.equals("=")){
+                    boolean result = false;
+                    Symbol temp = list.get(0);
+                    for(int i = 1; i < list.size(); i++){
+                        result = (temp.toString().equals(list.get(i).toString()));
+                        if(!result) break;
+                    }
+                    return ConstantPool.lookup((result ? "#t" : "#f"));
+                }
+                else if(pname.equals("apply")){
                     Symbol add = (Symbol)eval(actualArgs.remove(0), env);
                     AST last = actualArgs.remove(actualArgs.size()-1);
                     List<AST> lastList = last.seq;

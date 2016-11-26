@@ -196,9 +196,10 @@ public class Token {
             case '[':
                 this.type = "array";
             case ']':
-                case '+':
-                case '/':
-                case '*':
+            case '+':
+            case '/':
+            case '*':
+            case '=':
                     this.type = "identifier";
                 ++currIndex;
                 return ch + "";
