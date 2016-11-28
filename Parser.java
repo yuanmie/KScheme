@@ -273,14 +273,39 @@ public class Parser {
     private Symbol parse_datum() {
         Symbol symbol = new Symbol();
         Type type = new Type();
+        symbol.type = type;
         String t = token.nextToken();
-        if(token.type.equals("identifier")){
+        symbol.value = t;
+        if(t.equals("(")){
+            type.type = "list";
+            symbol.value = parse_list();
+        }
+        else if(token.type.equals("identifier")){
             symbol.value = t;
             type.type = "identifier";
             symbol.type = type;
 
+        }else if(t.equals("#t") || token.equals("#f")){
+            type.type = (token.equals("#t"))?"true":"false";
+            return ConstantPool.lookup(t);
+        }else if(token.type.equals("char")){
+
+            type.type = "char";
+            symbol.type = type;
+        }else if(token.type.equals("string")){
+            type.type = "string";
+        }else if(token.type.equals("number")){
+            type.type = "number";
         }
         return symbol;
+    }
+
+    private Object parse_list() {
+        List<Symbol> seq = new ArrayList<Symbol>();
+        while(!peekExpect(")")){
+            seq.add(parse_datum());
+        }
+        return seq;
     }
 
     public AST parse_define(){

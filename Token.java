@@ -18,6 +18,8 @@ public class Token {
         this.charArray = text.toCharArray();
     }
 
+
+
     public String getType() {
         return type;
     }
@@ -263,7 +265,7 @@ public class Token {
                     return sign + text.substring(oldIndex, currIndex);
                 } else if(ch == '_' || isAlpha(ch)){
                     oldIndex = currIndex++;
-                    while(!eof() && (isDigit(charArray[currIndex]) || isAlpha(charArray[currIndex]) || charArray[currIndex] == '_')){
+                    while(!eof() && (isDigit(charArray[currIndex]) || isAlpha(charArray[currIndex]) || isExpandChar(charArray[currIndex]))){
                         currIndex++;
                     }
                     this.type = "identifier";
@@ -291,6 +293,10 @@ public class Token {
         return c >= '0' && c <= '9';
     }
     public boolean isAlpha(int c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');}
+    public boolean isExpandChar(int c){
+        String expandChar = "!$%&*+-./:<=>?@^_~";
+        return expandChar.indexOf(c) >= 0;
+    }
 
     public String getNumberType() {
         return numberType;
