@@ -63,12 +63,6 @@ public class Token {
         String sign = "";
         int oldIndex = 0;
         switch (ch) {
-            case 'i': if(charArray[currIndex+1] == 'f'){
-                currIndex += 2;
-                this.type = "if";
-                return "if";
-            }
-                break;
             case '#': if(charArray[currIndex+1] == 'f'){
                 currIndex += 2;
                 this.type = "false";
@@ -82,115 +76,6 @@ public class Token {
                 this.type = "char";
                 return "'" + charArray[currIndex-1] + "'";
              }
-                break;
-            case 't':
-                if (charArray[currIndex + 1] == 'r' && charArray[currIndex + 2] == 'u' && charArray[currIndex + 3] == 'e') {
-                    currIndex += 4;
-                    this.type = "true";
-                    return "true";
-                }
-
-                break;
-            case 'c':
-                if (charArray[currIndex + 1] == 'o' && charArray[currIndex + 2] == 'n' && charArray[currIndex + 3] == 's') {
-                    currIndex += 4;
-                    this.type = "cons";
-                    return "cons";
-                }else  if (charArray[currIndex + 1] == 'o' && charArray[currIndex + 2] == 'n' && charArray[currIndex + 3] == 'd') {
-                    currIndex += 4;
-                    this.type = "cond";
-                    return "cond";
-                }
-
-                break;
-            case 'w':
-                if (charArray[currIndex + 1] == 'h' && charArray[currIndex + 2] == 'e' && charArray[currIndex + 3] == 'n') {
-                    currIndex += 4;
-                    this.type = "when";
-                    return "when";
-                }
-
-                break;
-            case 'u':
-                if (charArray[currIndex + 1] == 'n' && charArray[currIndex + 2] == 'l' && charArray[currIndex + 3] == 'e'
-                        && charArray[currIndex+4] == 's' && charArray[currIndex+5] == 's') {
-                    currIndex += 6;
-                    this.type = "unless";
-                    return "unless";
-                }
-
-                break;
-            case 'f':
-                if (charArray[currIndex + 1] == 'a' && charArray[currIndex + 2] == 'l' && charArray[currIndex + 3] == 's' && charArray[currIndex + 4] == 'e') {
-                    currIndex += 5;
-                    this.type = "false";
-                    return "false";
-                }
-                break;
-            case 'a':
-                if (charArray[currIndex + 1] == 'p' && charArray[currIndex + 2] == 'p' && charArray[currIndex + 3] == 'l' && charArray[currIndex + 4] == 'y') {
-                    currIndex += 5;
-                    this.type = "apply";
-                    return "apply";
-                }
-                break;
-            case 'b':
-                if (charArray[currIndex + 1] == 'e' && charArray[currIndex + 2] == 'g' && charArray[currIndex + 3] == 'i' && charArray[currIndex + 4] == 'n') {
-                    currIndex += 5;
-                    this.type = "begin";
-                    return "begin";
-                }
-                break;
-            case 'q':
-                if (charArray[currIndex + 1] == 'u' && charArray[currIndex + 2] == 'o' && charArray[currIndex + 3] == 't' && charArray[currIndex + 4] == 'e') {
-                    currIndex += 5;
-                    this.type = "quote";
-                    return "quote";
-                }
-                break;
-            case 'n':
-                if (charArray[currIndex + 1] == 'u' && charArray[currIndex + 2] == 'l' && charArray[currIndex + 3] == 'l') {
-                    currIndex += 4;
-                    this.type = "null";
-                    return "null";
-                }
-                break;
-            case 'd':
-                if (charArray[currIndex + 1] == 'e' && charArray[currIndex + 2] == 'f' && charArray[currIndex + 3] == 'i' && charArray[currIndex + 4] == 'n' && charArray[currIndex + 5] == 'e') {
-                    currIndex += 6;
-                    this.type = "define";
-                    return "define";
-                }
-                break;
-            case 'l':
-                if (charArray[currIndex + 1] == 'a' && charArray[currIndex + 2] == 'm' && charArray[currIndex + 3] == 'b' && charArray[currIndex + 4] == 'd' && charArray[currIndex + 5] == 'a') {
-                    currIndex += 6;
-                    this.type = "lambda";
-                    return "lambda";
-                }else if (charArray[currIndex + 1] == 'i' && charArray[currIndex + 2] == 's' && charArray[currIndex + 3] == 't') {
-                    currIndex += 4;
-                    this.type = "list";
-                    return "list";
-                }else if (charArray[currIndex + 1] == 'e' && charArray[currIndex + 2] == 't' && charArray[currIndex + 3] == 'r' && charArray[currIndex + 4] == 'e' && charArray[currIndex + 5] == 'c') {
-                    currIndex += 6;
-                    this.type = "letrec";
-                    return "letrec";
-                }
-                else if(charArray[currIndex + 1] == 'e' && charArray[currIndex + 2] == 't' && charArray[currIndex + 3] == '*'){
-                    currIndex += 4;
-                    this.type = "let*";
-                    return "let*";
-                }else if(charArray[currIndex + 1] == 'e' && charArray[currIndex + 2] == 't'){
-                    currIndex += 3;
-                    this.type = "let";
-                    return "let";
-                }
-            case 's':
-                if (charArray[currIndex + 1] == 'e' && charArray[currIndex + 2] == 't' && charArray[currIndex + 3] == '!') {
-                    currIndex += 4;
-                    this.type = "set!";
-                    return "set!";
-                }
                 break;
             case '{':
                 this.type = "object";
@@ -218,7 +103,6 @@ public class Token {
                     ++currIndex;
                     return ".";
             }
-
             case '"':
                 oldIndex = currIndex;
                 while (!eof() && charArray[++currIndex] != '"') {
@@ -264,6 +148,111 @@ public class Token {
                     }
                     return sign + text.substring(oldIndex, currIndex);
                 } else if(ch == '_' || isAlpha(ch)){
+                    switch (ch){
+                        case 'i': if(charArray[currIndex+1] == 'f'){
+                            currIndex += 2;
+                            this.type = "if";
+                            return "if";
+                        }
+                        case 't':
+                            if (charArray[currIndex + 1] == 'r' && charArray[currIndex + 2] == 'u' && charArray[currIndex + 3] == 'e') {
+                                currIndex += 4;
+                                this.type = "true";
+                                return "true";
+                            }
+
+                        case 'c':
+                            if (charArray[currIndex + 1] == 'o' && charArray[currIndex + 2] == 'n' && charArray[currIndex + 3] == 's') {
+                                currIndex += 4;
+                                this.type = "cons";
+                                return "cons";
+                            }else  if (charArray[currIndex + 1] == 'o' && charArray[currIndex + 2] == 'n' && charArray[currIndex + 3] == 'd') {
+                                currIndex += 4;
+                                this.type = "cond";
+                                return "cond";
+                            }
+
+                        case 'w':
+                            if (charArray[currIndex + 1] == 'h' && charArray[currIndex + 2] == 'e' && charArray[currIndex + 3] == 'n') {
+                                currIndex += 4;
+                                this.type = "when";
+                                return "when";
+                            }
+
+                        case 'u':
+                            if (charArray[currIndex + 1] == 'n' && charArray[currIndex + 2] == 'l' && charArray[currIndex + 3] == 'e'
+                                    && charArray[currIndex+4] == 's' && charArray[currIndex+5] == 's') {
+                                currIndex += 6;
+                                this.type = "unless";
+                                return "unless";
+                            }
+
+                        case 'f':
+                            if (charArray[currIndex + 1] == 'a' && charArray[currIndex + 2] == 'l' && charArray[currIndex + 3] == 's' && charArray[currIndex + 4] == 'e') {
+                                currIndex += 5;
+                                this.type = "false";
+                                return "false";
+                            }
+                        case 'a':
+                            if (currIndex + 4 < text_length && charArray[currIndex + 1] == 'p' && charArray[currIndex + 2] == 'p' && charArray[currIndex + 3] == 'l' && charArray[currIndex + 4] == 'y') {
+                                currIndex += 5;
+                                this.type = "apply";
+                                return "apply";
+                            }
+                        case 'b':
+                            if (currIndex + 4 < text_length && charArray[currIndex + 1] == 'e' && charArray[currIndex + 2] == 'g' && charArray[currIndex + 3] == 'i' && charArray[currIndex + 4] == 'n') {
+                                currIndex += 5;
+                                this.type = "begin";
+                                return "begin";
+                            }
+                        case 'q':
+                            if (currIndex + 4 < text_length && charArray[currIndex + 1] == 'u' && charArray[currIndex + 2] == 'o' && charArray[currIndex + 3] == 't' && charArray[currIndex + 4] == 'e') {
+                                currIndex += 5;
+                                this.type = "quote";
+                                return "quote";
+                            }
+                        case 'n':
+                            if (currIndex + 3 < text_length && charArray[currIndex + 1] == 'u' && charArray[currIndex + 2] == 'l' && charArray[currIndex + 3] == 'l') {
+                                currIndex += 4;
+                                this.type = "null";
+                                return "null";
+                            }
+                        case 'd':
+                            if (currIndex + 5 < text_length && charArray[currIndex + 1] == 'e' && charArray[currIndex + 2] == 'f' && charArray[currIndex + 3] == 'i' && charArray[currIndex + 4] == 'n' && charArray[currIndex + 5] == 'e') {
+                                currIndex += 6;
+                                this.type = "define";
+                                return "define";
+                            }
+                        case 'l':
+                            if (currIndex + 5 < text_length && charArray[currIndex + 1] == 'a' && charArray[currIndex + 2] == 'm' && charArray[currIndex + 3] == 'b' && charArray[currIndex + 4] == 'd' && charArray[currIndex + 5] == 'a') {
+                                currIndex += 6;
+                                this.type = "lambda";
+                                return "lambda";
+                            }else if (currIndex + 3 < text_length && charArray[currIndex + 1] == 'i' && charArray[currIndex + 2] == 's' && charArray[currIndex + 3] == 't') {
+                                currIndex += 4;
+                                this.type = "list";
+                                return "list";
+                            }else if (currIndex + 5 < text_length && charArray[currIndex + 1] == 'e' && charArray[currIndex + 2] == 't' && charArray[currIndex + 3] == 'r' && charArray[currIndex + 4] == 'e' && charArray[currIndex + 5] == 'c') {
+                                currIndex += 6;
+                                this.type = "letrec";
+                                return "letrec";
+                            }
+                            else if(currIndex + 3 < text_length && charArray[currIndex + 1] == 'e' && charArray[currIndex + 2] == 't' && charArray[currIndex + 3] == '*'){
+                                currIndex += 4;
+                                this.type = "let*";
+                                return "let*";
+                            }else if(currIndex + 2 < text_length && charArray[currIndex + 1] == 'e' && charArray[currIndex + 2] == 't'){
+                                currIndex += 3;
+                                this.type = "let";
+                                return "let";
+                            }
+                        case 's':
+                            if (currIndex + 3 < text_length && charArray[currIndex + 1] == 'e' && charArray[currIndex + 2] == 't' && charArray[currIndex + 3] == '!') {
+                                currIndex += 4;
+                                this.type = "set!";
+                                return "set!";
+                            }
+                    }
                     oldIndex = currIndex++;
                     while(!eof() && (isDigit(charArray[currIndex]) || isAlpha(charArray[currIndex]) || isExpandChar(charArray[currIndex]))){
                         currIndex++;
