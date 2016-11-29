@@ -24,7 +24,6 @@ public class Parser {
         AST ast = null;
         String t = token.peekToken();
         if(First.contains("expression", t) && First.contains("definition", t)){
-                isProcedure = true;
                 token.nextToken();
                 t = token.peekToken();
             if(t.equals("define")){
@@ -181,6 +180,20 @@ public class Parser {
                 seq.add(parse_expression());
             }
             ast.seq = seq;
+        }else if(t.equals("do")){
+            ast.op = "do";
+            expect("(");
+            List<AST> list = new ArrayList<AST>();
+            while(!peekExpect(")")){
+                list.add(parse_init());
+            }
+            ast.left = new AST();
+            ast.left.op = "init";
+            ast.left.seq = list;
+
+            ast.right = parse_test();
+            ast.right.right = parse_expression();
+            expect(")");
         }
         else{
 
@@ -196,6 +209,29 @@ public class Parser {
 
         }
         isProcedure = false;
+        return ast;
+    }
+
+    private AST parse_init() {
+        AST ast = new AST();
+        expect("(");
+        ast.left = new AST();
+        ast.left.left = AST.leftValue(token.nextToken());
+        ast.left.right = parse_expression();
+        if(!token.peekToken().equals(")")){
+            ast.right = parse_expression();
+        }
+        expect(")");
+        return ast;
+    }
+
+    private AST parse_test() {
+        AST ast = new AST();
+        expect("(");
+        ast.left = new AST();
+        ast.left.left = parse_expression(); //condition
+        ast.left.right = parse_expression(); //expression
+        expect(")");
         return ast;
     }
 

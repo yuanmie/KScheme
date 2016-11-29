@@ -218,7 +218,12 @@ public class Token {
                                 return "null";
                             }
                         case 'd':
-                            if (currIndex + 5 < text_length && charArray[currIndex + 1] == 'e' && charArray[currIndex + 2] == 'f' && charArray[currIndex + 3] == 'i' && charArray[currIndex + 4] == 'n' && charArray[currIndex + 5] == 'e') {
+                            if(currIndex + 1 < text_length && charArray[currIndex + 1] == 'o') {
+                                currIndex += 2;
+                                this.type = "do";
+                                return "do";
+                            }
+                            else if (currIndex + 5 < text_length && charArray[currIndex + 1] == 'e' && charArray[currIndex + 2] == 'f' && charArray[currIndex + 3] == 'i' && charArray[currIndex + 4] == 'n' && charArray[currIndex + 5] == 'e') {
                                 currIndex += 6;
                                 this.type = "define";
                                 return "define";

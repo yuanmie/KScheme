@@ -232,6 +232,13 @@ public class Scheme {
         ast = scheme.parser.parse();
         o = scheme.eval(ast, scheme.global);
         scheme.display(o);
+
+        text =  "(do ((i 0 (+ i 1))) ((= i 5) i) i)";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
         while(true){
             System.out.print("KScheme>");
              text = input.nextLine();
@@ -318,6 +325,36 @@ public class Scheme {
                 o = eval(a, env);
             }
             return o;
+        }
+        if(ast.op.equals("do")){
+            AST init = ast.left;
+            AST test = ast.right.left;
+            AST condition = test.left;
+            AST revalue = test.right;
+            AST body = ast.right.right;
+
+            //init env
+            Env e = new Env();
+            e.parent = env;
+            List<AST> step = new ArrayList<AST>();
+            for(AST a : init.seq){
+                e.install_local(a.left.left.name,eval(a.left.right, env));
+
+                if(a.right != null){
+                    AST t = new AST();
+                    t.op = "set!";
+                    t.left = a.left.left;
+                    t.left.op = "lvalue";
+                    t.right = a.right;
+                    step.add(t);
+                }
+            }
+            while(eval(condition,e).toString().equals("#f")){
+                eval(body, e);
+                for(AST s : step) eval(s, e);
+            }
+            if(revalue == null) return null;
+            return eval(revalue, e);
         }
         if(ast.op.equals("let") || ast.op.equals("let*") || ast.op.equals("letrec")){
             String op = ast.op;
