@@ -216,6 +216,22 @@ public class Scheme {
         ast = scheme.parser.parse();
         o = scheme.eval(ast, scheme.global);
         scheme.display(o);
+
+
+        text =  "(define xdd (let ((x 4)) (lambda (y) (+ x y))))";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
+
+        System.out.println("=====================");
+        text =  "((lambda (x) x) 1)";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
         while(true){
             System.out.print("KScheme>");
              text = input.nextLine();
@@ -290,6 +306,9 @@ public class Scheme {
             env.set(lvalue,rvalue);
             return rvalue;
         }if(ast.op.equals("lambda")){
+            Symbol s = ast.value;
+            Procedure p = (Procedure)s.value;
+            p.env = env;
             return ast.value;
         }
         if(ast.op.equals("begin")){

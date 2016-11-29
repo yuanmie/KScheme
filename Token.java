@@ -207,7 +207,7 @@ public class Token {
             case '/':
             case '*':
             case '=':
-                    this.type = "identifier";
+                this.type = "identifier";
                 ++currIndex;
                 return ch + "";
             //string token

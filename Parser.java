@@ -183,15 +183,17 @@ public class Parser {
             ast.seq = seq;
         }
         else{
-            isProcedure = false;
-            ast.op = "call";
-            String procedure = t;
-            List<AST> actualArgs = new ArrayList<AST>();
-            while(!peekExpect(")")){
-                actualArgs.add(parse_expression());
-            }
-            ast.name =procedure;
-            ast.args = actualArgs;
+
+                isProcedure = false;
+                ast.op = "call";
+                String procedure = t;
+                List<AST> actualArgs = new ArrayList<AST>();
+                while (!peekExpect(")")) {
+                    actualArgs.add(parse_expression());
+                }
+                ast.name = procedure;
+                ast.args = actualArgs;
+
         }
         isProcedure = false;
         return ast;
