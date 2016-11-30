@@ -1,7 +1,7 @@
 import java.util.HashMap;
 import java.util.Map;
 
-public class Env {
+public class Env extends SchemeUtil{
     private Map<String, Object> environment;
     public Env parent;
 
@@ -37,6 +37,11 @@ public class Env {
 
 
     public void installPrimitive() {
-        install("a", 1);
+        for(String name : primitive){
+            Symbol s = new Symbol();
+            s.type = new Type("primitive");
+            s.name = name;
+            install(name, s);
+        }
     }
 }

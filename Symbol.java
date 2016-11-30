@@ -28,6 +28,8 @@ public class Symbol {
         }else if(type.type.equals("list")){
             List<Symbol> list = (List<Symbol>)value;
             return list.toString();
+        }else if(type.type.equals("primitive")){
+            return "#<primitive>"+name;
         } else{
             return value.toString();
         }

@@ -1,12 +1,10 @@
 import java.util.*;
 
-public class Scheme {
+public class Scheme extends SchemeUtil{
     private Env global;
     private Token token;
     Parser parser;
-    public String[] primitive = {
-            "+", "-", "*", "/","=","apply"
-    };
+
     public List<String> primitiveList;
 
     public Scheme(){
