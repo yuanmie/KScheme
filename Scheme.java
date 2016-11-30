@@ -223,13 +223,7 @@ public class Scheme extends SchemeUtil{
         o = scheme.eval(ast, scheme.global);
         scheme.display(o);
 
-        System.out.println("=====================");
-        text =  "((lambda (x) x) 1)";
-        token.setText(text);
-        scheme.setToken(token);
-        ast = scheme.parser.parse();
-        o = scheme.eval(ast, scheme.global);
-        scheme.display(o);
+
 
         text =  "(do ((i 0 (+ i 1))) ((= i 5) i) i)";
         token.setText(text);
@@ -240,6 +234,14 @@ public class Scheme extends SchemeUtil{
 
 
         text =  "(make-vector (+ 1 2) 9)";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
+
+        System.out.println("=====================");
+        text =  "((lambda (x) x) 1 2 3 4)";
         token.setText(text);
         scheme.setToken(token);
         ast = scheme.parser.parse();
@@ -260,6 +262,27 @@ public class Scheme extends SchemeUtil{
 
     private Object eval(AST ast, Env env) {
         if(ast == null) return null;
+        if(ast.op.equals("pitfall")){
+            Symbol s = new Symbol();
+            s.type = new Type("list");
+            List<AST> seq = ast.seq;
+            List<Symbol> list = new ArrayList<Symbol>();
+            Symbol ss = (Symbol)eval(ast.left, env);
+            String name = "lambda_pitfall";
+            env.install_local(name, ss);
+            for(AST a : seq){
+
+                AST tree = new AST();
+                tree.op = "call";
+                tree.name = name;
+
+                tree.args = new ArrayList<AST>();
+                tree.args.add(a);
+                list.add((Symbol)eval(tree, env));
+            }
+            s.value = list;
+            return s;
+        }
         if(ast.op.equals("lvalue")){
             return ast.name;
         }

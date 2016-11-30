@@ -8,6 +8,7 @@ public class Parser extends SchemeUtil{
     private boolean isProcedure = false;
     private boolean isListArgs = false;
     private boolean isPairArgs;
+    private int pitfall = 0;
 
     public Parser(Token token){
         this.token = token;
@@ -32,6 +33,7 @@ public class Parser extends SchemeUtil{
             if(t.equals("define")){
                 ast = parse_define();
             }else{
+                if(t.equals("(")) pitfall = 1;
                 ast = parse_expression();
             }
         }
@@ -148,6 +150,7 @@ public class Parser extends SchemeUtil{
             ast.right = parse_expression();
             expect(")");
         }else if(t.equals("lambda")){
+            isProcedure = false;
             Symbol s = new Symbol();
             Type type = new Type("procedure");
             s.type = type;
@@ -164,6 +167,17 @@ public class Parser extends SchemeUtil{
             ast.value = s;
 
             expect(")");
+
+            if(pitfall-- == 1){
+                AST pit = new AST();
+                pit.left = ast;
+                ast = pit;
+                ast.op = "pitfall";
+
+                List<AST> list = new ArrayList<AST>();
+                while(!peekExpect(")")) list.add(parse_expression());
+                ast.seq = list;
+            }
         }else if(t.equals("begin")){
             ast.op = "begin";
             List<AST> seq = new ArrayList<AST>();
