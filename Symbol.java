@@ -29,7 +29,7 @@ public class Symbol {
             List<Symbol> list = (List<Symbol>)value;
             return list.toString();
         }else if(type.type.equals("primitive")){
-            return "#<primitive>"+name;
+            return "#<procedure " + name + " >";
         } else{
             return value.toString();
         }

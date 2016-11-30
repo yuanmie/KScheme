@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Parser {
+public class Parser extends SchemeUtil{
     public Token token;
     private boolean isProcedure = false;
     private boolean isListArgs = false;
@@ -24,6 +24,7 @@ public class Parser {
         AST ast = null;
         String t = token.peekToken();
         if(First.contains("expression", t) && First.contains("definition", t)){
+            isProcedure = true;
                 token.nextToken();
                 t = token.peekToken();
             if(t.equals("define")){

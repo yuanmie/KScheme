@@ -415,6 +415,17 @@ public class Scheme extends SchemeUtil{
                         if(!result) break;
                     }
                     return ConstantPool.lookup((result ? "#t" : "#f"));
+                }else if(pname.equals(">") || pname.equals("<")){
+                    boolean result = false;
+                    Symbol temp = list.get(0);
+                    for(int i = 1; i < list.size(); i++){
+                        result =  pname.equals(">") ?
+                        Double.parseDouble(temp.toString()) > Double.parseDouble(list.get(i).toString()) :
+                        Double.parseDouble(temp.toString()) < Double.parseDouble(list.get(i).toString());
+                        temp = list.get(i);
+                        if(!result) break;
+                    }
+                    return ConstantPool.lookup((result ? "#t" : "#f"));
                 }
                 else if(pname.equals("apply")){
                     Symbol add = (Symbol)eval(actualArgs.remove(0), env);

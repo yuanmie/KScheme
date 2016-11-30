@@ -58,7 +58,7 @@ public class Token {
 
     public String nextToken() {
         if (eof()) return "";
-        while(charArray[currIndex] == ' ') ++currIndex;
+        while(charArray[currIndex] == ' ' || charArray[currIndex] == '\t' || charArray[currIndex] == '\n') ++currIndex;
         char ch = charArray[currIndex];
         String sign = "";
         int oldIndex = 0;
@@ -75,8 +75,9 @@ public class Token {
                 currIndex += 3;
                 this.type = "char";
                 return "'" + charArray[currIndex-1] + "'";
-             }
-                break;
+             }else{
+                throw new RuntimeException("cannot identify #");
+            }
             case '{':
                 this.type = "object";
                 ++currIndex;
@@ -88,6 +89,8 @@ public class Token {
             case '[':
                 this.type = "array";
             case ']':
+            case '>':
+            case '<':
             case '+':
             case '/':
             case '*':
@@ -276,7 +279,6 @@ public class Token {
                 }
 
         }
-        return "";
     }
 
     public Boolean eof() {
