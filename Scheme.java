@@ -237,6 +237,14 @@ public class Scheme extends SchemeUtil{
         ast = scheme.parser.parse();
         o = scheme.eval(ast, scheme.global);
         scheme.display(o);
+
+
+        text =  "(make-vector (+ 1 2) 9)";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
         while(true){
             System.out.print("KScheme>");
              text = input.nextLine();
@@ -517,6 +525,21 @@ public class Scheme extends SchemeUtil{
                 list.add((Symbol)eval(a, env));
             }
             s.value = list;
+            return s;
+        }
+        if(ast.op.equals("make-vector")){
+            Symbol s = new Symbol();
+            s.type = new Type("vector");
+            Symbol number = (Symbol)eval(ast.left, env);
+            int n = (Integer)number.value;
+            Symbol[] vector = new Symbol[n];
+            if(ast.right != null){
+                Symbol init = (Symbol)eval(ast.right, env);
+                for(int i = 0; i < vector.length; i++){
+                    vector[i] = init;
+                }
+            }
+            s.value = vector;
             return s;
         }
         return null;

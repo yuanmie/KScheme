@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.List;
 
 public class Symbol {
@@ -27,9 +28,13 @@ public class Symbol {
             return "(" + p.first.toString() + " . " + p.rest.toString() + ")";
         }else if(type.type.equals("list")){
             List<Symbol> list = (List<Symbol>)value;
-            return list.toString();
+            return list.toString().replace("[", "(").replace("]",")").replace(",","");
         }else if(type.type.equals("primitive")){
-            return "#<procedure " + name + " >";
+            return "#<procedure " + name + ">";
+        }else if(type.type.equals("vector")){
+            Symbol[] vector = (Symbol[])value;
+
+            return "#" + Arrays.toString(vector).replace("[", "(").replace("]",")").replace(",","");
         } else{
             return value.toString();
         }

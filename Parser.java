@@ -1,3 +1,5 @@
+import sun.awt.image.IntegerInterleavedRaster;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -181,7 +183,20 @@ public class Parser extends SchemeUtil{
                 seq.add(parse_expression());
             }
             ast.seq = seq;
-        }else if(t.equals("do")){
+        }else if(t.equals("make-vector")){
+            ast.op = "make-vector";
+
+            AST number = parse_expression();
+
+            AST init = null;
+            if(!token.peekToken().equals(")")){
+                init = parse_expression();
+            }
+            expect(")");
+            ast.left = number;
+            ast.right = init;
+        }
+        else if(t.equals("do")){
             ast.op = "do";
             expect("(");
             List<AST> list = new ArrayList<AST>();
