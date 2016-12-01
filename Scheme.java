@@ -523,16 +523,18 @@ public class Scheme extends SchemeUtil{
 
                 List<Symbol> formArgs = procedure.args;
                 List<AST> actualArgs = ast.args;
+                int size = formArgs.size();
                 if(procedure.isPairArgs){
-                    String argsPairName = formArgs.remove(formArgs.size()-1).name; //pair args
+
+                    String argsPairName = formArgs.get(--size).name; //pair args
                     Symbol last = (Symbol)eval(actualArgs.remove(actualArgs.size()-1), env);
                     procedure.env.install_local(argsPairName, last);
                 }
                 if(procedure.isListArgs){
-                    String argsListName = formArgs.get(formArgs.size()-1).name;
+                    String argsListName = formArgs.get(--size).name;
 
                     int index = 0;
-                    for(index = 0; index < formArgs.size()-1; index ++){
+                    for(index = 0; index < size; index ++){
                         procedure.env.install_local(formArgs.get(index).name, eval(actualArgs.get(index), env));
                     }
 
@@ -546,8 +548,7 @@ public class Scheme extends SchemeUtil{
                     s.value = list;
                     procedure.env.install_local(argsListName, s);
                 }else{
-                    int size = formArgs.size();
-                    for(int index = 0; index < formArgs.size(); index ++){
+                    for(int index = 0; index < size; index ++){
                         procedure.env.install_local(formArgs.get(index).name, eval(actualArgs.get(index), env));
                     }
                 }
