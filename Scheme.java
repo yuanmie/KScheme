@@ -1,3 +1,5 @@
+import com.sun.org.apache.xerces.internal.util.SymbolTable;
+
 import java.util.*;
 
 public class Scheme extends SchemeUtil{
@@ -96,7 +98,7 @@ public class Scheme extends SchemeUtil{
         o = scheme.eval(ast, scheme.global);
         scheme.display(o);
 
-        text = "(define zz (lambda (x ... . y) (if #f x y)))";
+        text = "(define zz (lambda (xx x ... . y) (if #f x y)))";
         token.setText(text);
         scheme.setToken(token);
         ast = scheme.parser.parse();
@@ -240,6 +242,7 @@ public class Scheme extends SchemeUtil{
         o = scheme.eval(ast, scheme.global);
         scheme.display(o);
 
+
         System.out.println("=====================");
         text =  "((lambda (x) x) 1 2 3 4)";
         token.setText(text);
@@ -247,7 +250,22 @@ public class Scheme extends SchemeUtil{
         ast = scheme.parser.parse();
         o = scheme.eval(ast, scheme.global);
         scheme.display(o);
+
+        text =  "(define a (lambda (x z y ... . w) (list y w)))";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
+
+        text =  "(a 1 2 3 4 5 (list 99 88))";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
         while(true){
+            StringBuffer sb = new StringBuffer();
             System.out.print("KScheme>");
              text = input.nextLine();
             if(text.equals("exit")){break;}
@@ -270,15 +288,28 @@ public class Scheme extends SchemeUtil{
             Symbol ss = (Symbol)eval(ast.left, env);
             String name = "lambda_pitfall";
             env.install_local(name, ss);
-            for(AST a : seq){
 
+            Procedure pit = (Procedure)ss.value;
+            if(pit.args.size() == 1) {
+
+                for (AST a : seq) {
+
+                    AST tree = new AST();
+                    tree.op = "call";
+                    tree.name = name;
+
+                    tree.args = new ArrayList<AST>();
+                    tree.args.add(a);
+                    list.add((Symbol) eval(tree, env));
+                }
+            }else{
                 AST tree = new AST();
                 tree.op = "call";
                 tree.name = name;
 
-                tree.args = new ArrayList<AST>();
-                tree.args.add(a);
-                list.add((Symbol)eval(tree, env));
+                tree.args = seq;
+
+                list.add((Symbol) eval(tree, env));
             }
             s.value = list;
             return s;
@@ -492,20 +523,19 @@ public class Scheme extends SchemeUtil{
                 List<Symbol> formArgs = procedure.args;
                 List<AST> actualArgs = ast.args;
                 if(procedure.isPairArgs){
-                    String argsListName = formArgs.get(0).name;
-                    String argsPairName = formArgs.get(1).name; //pair args
-                    Symbol s = new Symbol();
-                    s.type = new Type("list");
-                    List<Symbol> list = new ArrayList<Symbol>();
-                    for(AST a : actualArgs){
-                        list.add((Symbol)eval(a, env));
-                    }
-                    Symbol last = list.remove(list.size() - 1);
-                    s.value = list;
-                    procedure.env.install_local(argsListName, s);
+                    String argsPairName = formArgs.remove(formArgs.size()-1).name; //pair args
+                    Symbol last = (Symbol)eval(actualArgs.remove(actualArgs.size()-1), env);
                     procedure.env.install_local(argsPairName, last);
-                }else if(procedure.isListArgs && !procedure.isPairArgs){
-                    String argsListName = formArgs.get(0).name;
+                }
+                if(procedure.isListArgs){
+                    String argsListName = formArgs.get(formArgs.size()-1).name;
+
+                    int index = 0;
+                    for(index = 0; index < formArgs.size()-1; index ++){
+                        procedure.env.install_local(formArgs.get(index).name, eval(actualArgs.get(index), env));
+                    }
+
+                    actualArgs = actualArgs.subList(index,actualArgs.size());
                     Symbol s = new Symbol();
                     s.type = new Type("list");
                     List<Symbol> list = new ArrayList<Symbol>();

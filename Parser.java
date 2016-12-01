@@ -191,6 +191,7 @@ public class Parser extends SchemeUtil{
             ast.right = parse_expression();
             expect(")");
         }else if(t.equals("list")){
+            isProcedure = false;
             ast.op = "list";
             List<AST> seq = new ArrayList<AST>();
             while(!peekExpect(")")){
