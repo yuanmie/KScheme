@@ -144,6 +144,9 @@ public class Parser extends SchemeUtil{
             ast.op = "quote";
             ast.value = parse_datum();
             expect(")");
+        }else if(t.equals("`")){
+            ast.op = "quote";
+            ast.value = parse_datum();
         }else if(token.type.equals("set!")){
             ast.op = "set!";
             ast.left = AST.leftValue(token.nextToken());
@@ -345,7 +348,11 @@ public class Parser extends SchemeUtil{
         symbol.type = type;
         String t = token.nextToken();
         symbol.value = t;
-        if(t.equals("(")){
+        if(t.equals("#(")){
+            type.type = "vector";
+            symbol.value = parse_vector();
+        }
+        else if(t.equals("(")){
             type.type = "list";
             symbol.value = parse_list();
         }
@@ -367,6 +374,15 @@ public class Parser extends SchemeUtil{
             type.type = "number";
         }
         return symbol;
+    }
+
+    private Object parse_vector() {
+        List<Symbol> seq = new ArrayList<Symbol>();
+        while(!peekExpect(")")){
+            seq.add(parse_datum());
+        }
+        Symbol[] result = new Symbol[seq.size()];
+        return seq.toArray(result);
     }
 
     private Object parse_list() {

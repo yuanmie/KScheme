@@ -1,6 +1,7 @@
-import com.sun.org.apache.xerces.internal.util.SymbolTable;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
 
 public class Scheme extends SchemeUtil{
     private Env global;

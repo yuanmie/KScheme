@@ -75,7 +75,11 @@ public class Token {
                 currIndex += 3;
                 this.type = "char";
                 return "'" + charArray[currIndex-1] + "'";
-             }else{
+             }else if(charArray[currIndex+1] == '('){
+                currIndex += 2;
+                this.type = "vector";
+                return "#(";
+            }else{
                 throw new RuntimeException("cannot identify #");
             }
             case '{':
@@ -98,6 +102,10 @@ public class Token {
                 this.type = "identifier";
                 ++currIndex;
                 return ch + "";
+            case '`':
+                this.type = "quote1";
+                ++currIndex;
+                return ch+"";
             //string token
             case '.':if(charArray[currIndex+1] == '.' && charArray[currIndex+2] == '.') {
                     currIndex += 3;
