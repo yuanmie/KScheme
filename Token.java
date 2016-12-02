@@ -89,6 +89,13 @@ public class Token {
             case '}':
             case ',':
             case ':':
+            case ';':
+                do{
+                    ++currIndex;
+                }while(!eof() && charArray[currIndex] != '\n');
+
+                this.type = "comment";;
+                return "";
             case '(':case')':
             case '[':
                 this.type = "array";

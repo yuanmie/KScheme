@@ -161,7 +161,7 @@ public class Parser extends SchemeUtil{
         }else if(token.type.equals("set!")){
             ast.op = "set!";
             ast.left = AST.leftValue(token.nextToken());
-            ast.right = parse_expression();
+            ast.right = parse_form();
             expect(")");
         }else if(t.equals("lambda")){
             isProcedure = false;
@@ -435,7 +435,7 @@ public class Parser extends SchemeUtil{
                 expect(")");
             }else{
                 ast.left = AST.leftValue(t);
-                ast.right = parse_expression();
+                ast.right = parse_form();
                 expect(")");
             }
         }
