@@ -265,6 +265,13 @@ public class Scheme extends SchemeUtil{
         ast = scheme.parser.parse();
         o = scheme.eval(ast, scheme.global);
         scheme.display(o);
+
+        text =  "((if #t + -) 3 4)";
+        token.setText(text);
+        scheme.setToken(token);
+        ast = scheme.parser.parse();
+        o = scheme.eval(ast, scheme.global);
+        scheme.display(o);
         while(true){
             StringBuffer sb = new StringBuffer();
             System.out.print("KScheme>");
@@ -291,7 +298,7 @@ public class Scheme extends SchemeUtil{
             env.install_local(name, ss);
 
             Procedure pit = (Procedure)ss.value;
-            if(pit.args.size() == 1) {
+            if(!isPrimitive(ss.name) && pit.args.size() == 1) {
 
                 for (AST a : seq) {
 
@@ -306,7 +313,7 @@ public class Scheme extends SchemeUtil{
             }else{
                 AST tree = new AST();
                 tree.op = "call";
-                tree.name = name;
+                tree.name = (ss.name == null) ? name : ss.name;
 
                 tree.args = seq;
 

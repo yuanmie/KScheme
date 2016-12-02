@@ -278,7 +278,7 @@ public class Token {
                 }
                 else {
                     if(sign.equals("-")){
-                        ++currIndex;
+
                         sign = "";
                         return "-";
 

@@ -41,6 +41,10 @@ public class Env extends SchemeUtil{
             Symbol s = new Symbol();
             s.type = new Type("primitive");
             s.name = name;
+            Procedure p = new Procedure();
+            p.isListArgs = true;
+            p.isPairArgs = false;
+            s.value = p;
             install(name, s);
         }
     }

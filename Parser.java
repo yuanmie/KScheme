@@ -101,6 +101,17 @@ public class Parser extends SchemeUtil{
             }else{
                 expect(")");
             }
+
+            if(pitfall-- == 1){
+                AST pit = new AST();
+                pit.left = ast;
+                ast = pit;
+                ast.op = "pitfall";
+
+                List<AST> list = new ArrayList<AST>();
+                while(!peekExpect(")")) list.add(parse_expression());
+                ast.seq = list;
+            }
         }else if(t.equals("when") || t.equals("unless")){
             isProcedure = false;
             ast.op = t;
